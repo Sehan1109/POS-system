@@ -1,8 +1,14 @@
 *.log
 .DS_Store
+
+# Environment files
 .env
 .env.backup
+.env.local
+.env.*.local
 .env.production
+
+# IDE & Editor files
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -11,14 +17,96 @@
 /.phpunit.cache
 /.vscode
 /.zed
+.vscode-server
+.code-workspace
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+.project
+.settings/
+.classpath
+
+# Dependencies
 /auth.json
 /node_modules
+/vendor
+
+# Build & Assets
 /public/build
 /public/hot
 /public/storage
+/dist
+/build
+
+# Storage
 /storage/*.key
 /storage/pail
-/vendor
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# Testing & Coverage
+/.phpunit.cache
+/tests/coverage/
+*.coverage
+*.xml
+.coverage
+.pytest_cache/
+phpstan.baseline.neon
+
+# Vagrant & Development
 Homestead.json
 Homestead.yaml
+vagrant.pem
+
+# OS files
 Thumbs.db
+.Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+.directory
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# NPM & Yarn
+.npm
+.eslintcache
+.node_repl_history
+yarn-error.log
+npm-debug.log*
+.yarn/cache
+.yarn/install-state.gz
+.pnp
+.pnp.js
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.editorconfig.local
+
+# Database
+/database/*.db
+/database/*.sqlite
+*.pem
+
+# Composer
+composer.lock
+
+# Laravel specific
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
