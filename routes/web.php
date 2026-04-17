@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,16 +34,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin-only Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // Admin Dashboard
-    Route::get('/dashboard', function () {
-        $data = [
-            'total_sales' => \App\Models\Sale::sum('total_amount'),
-            'total_products' => \App\Models\Product::count(),
-            'low_stock' => \App\Models\Product::where('stock_quantity', '<=', 10)->count(),
-            'total_users' => \App\Models\User::count(),
-        ];
-        return view('admin.dashboard', compact('data'));
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // User Management
     Route::resource('users', Admin\UserController::class);
@@ -85,15 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
 // Manager Routes
 Route::prefix('manager')->name('manager.')->middleware(['auth', 'manager'])->group(function () {
-    // Manager Dashboard
-    Route::get('/dashboard', function () {
-        $data = [
-            'total_sales' => \App\Models\Sale::sum('total_amount'),
-            'total_products' => \App\Models\Product::count(),
-            'low_stock' => \App\Models\Product::where('stock_quantity', '<=', 10)->count(),
-        ];
-        return view('manager.dashboard', compact('data'));
-    })->name('dashboard');
+    Route::get('/dashboard', [ManagerDashboardController::class, 'index'])->name('dashboard');
 
     // Product Management
     Route::resource('products', ProductController::class);
