@@ -40,6 +40,7 @@ class PosScreen extends Component
     public $taxAmount = 0;
     public $total = 0;
     public $paymentMethod = 'cash';
+    public $viewingOrder = null;
 
     public function mount()
     {
@@ -85,6 +86,21 @@ class PosScreen extends Component
             ->latest()
             ->take(12)
             ->get();
+    }
+
+    public function viewOrder($orderId)
+    {
+        $this->viewingOrder = Sale::with(['customer', 'user', 'items.product'])
+            ->find($orderId);
+
+        if (!$this->viewingOrder) {
+            session()->flash('error', 'Order not found.');
+        }
+    }
+
+    public function closeOrderModal()
+    {
+        $this->viewingOrder = null;
     }
 
     public function loadCustomers()

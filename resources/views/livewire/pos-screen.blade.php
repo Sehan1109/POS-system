@@ -35,7 +35,6 @@
     <main x-data="{ isSidebarOpen: false, activeTab: 'catalog' }" class="flex flex-1 overflow-hidden">
 
         {{-- Sidebar --}}
-        {{-- isSidebarOpen true නම් w-48 (පළල වැඩියි), false නම් w-20 (පළල අඩුයි) --}}
         <nav :class="isSidebarOpen ? 'w-52' : 'w-20'"
             class="bg-white border-r border-gray-200 flex flex-col pt-4 gap-2 shrink-0 transition-all duration-300 px-3">
 
@@ -60,7 +59,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
-                {{-- whitespace-nowrap මගින් text එක කඩාවැටීම වළක්වයි --}}
                 <span x-show="isSidebarOpen" x-transition.opacity.duration.300ms
                     class="ml-4 text-sm font-bold whitespace-nowrap" style="display: none;">Catalog</span>
             </div>
@@ -129,7 +127,7 @@
                         <div wire:click="addToCart({{ $prod->id }})"
                             class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2 cursor-pointer hover:border-blue-600 hover:shadow-md transition-all {{ $prod->stock_quantity <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}">
                             <div class="w-full h-[100px] bg-gray-50 rounded-lg flex items-center justify-center text-4xl">
-                                📦 {{-- You can replace this with an actual image tag if you add image paths to DB --}}
+                                📦
                             </div>
                             <div class="font-semibold text-sm text-gray-900 mt-1 leading-tight">{{ $prod->name }}</div>
                             <div class="text-blue-600 font-bold text-base">${{ number_format($prod->selling_price, 2) }}
@@ -151,7 +149,7 @@
                 <div class="flex items-center justify-between gap-4">
                     <div>
                         <h2 class="text-lg font-bold">Recent Orders</h2>
-                        <p class="text-sm text-gray-500">Last 12 transactions processed through the POS.</p>
+                        <p class="text-sm text-gray-500">Last transactions processed through the POS.</p>
                     </div>
                     <button @click="$wire.loadOrders()"
                         class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors">
@@ -173,7 +171,9 @@
                         </thead>
                         <tbody>
                             @forelse($orders as $order)
-                                <tr class="border-t border-gray-100 hover:bg-gray-50">
+                                {{-- Added wire:click and cursor-pointer to trigger the modal --}}
+                                <tr wire:click="viewOrder({{ $order->id }})"
+                                    class="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
                                     <td class="px-4 py-3 font-semibold">{{ $order->invoice_number ?? 'POS-' . $order->id }}
                                     </td>
                                     <td class="px-4 py-3">{{ $order->customer?->name ?? 'Walk-in' }}</td>
@@ -391,4 +391,156 @@
             </div>
         </aside>
     </main>
+
+    {{-- Order Details Modal --}}
+    @if($viewingOrder)
+        <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" x-data="{}"
+            @keydown.escape.window="$wire.closeOrderModal()">
+
+            {{-- Overlay with Backdrop Blur --}}
+            <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm cursor-pointer" wire:click="closeOrderModal">
+            </div>
+
+            {{-- Modal Card --}}
+            <div
+                class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+
+                {{-- Header --}}
+                <div class="flex items-start justify-between px-8 py-6 border-b border-slate-100">
+                    <div>
+                        <p class="text-[11px] text-blue-500 font-bold uppercase tracking-widest mb-2">Order Details</p>
+                        <h1 class="text-3xl font-bold text-gray-900">
+                            {{ $viewingOrder->invoice_number ?? '#' . str_pad($viewingOrder->id, 6, '0', STR_PAD_LEFT) }}
+                        </h1>
+                    </div>
+                    <button wire:click="closeOrderModal"
+                        class="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Body (Scrollable) --}}
+                <div class="flex-1 overflow-y-auto p-8">
+                    {{-- Details Grid --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        {{-- Customer --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Customer</p>
+                            <p class="text-sm font-semibold text-gray-900">
+                                {{ $viewingOrder->customer?->name ?? 'Walk-in Customer' }}
+                            </p>
+                        </div>
+
+                        {{-- Contact --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Contact</p>
+                            <p class="text-sm font-semibold text-gray-900">
+                                {{ $viewingOrder->customer?->phone ?? 'N/A' }}
+                            </p>
+                            @if($viewingOrder->customer?->email)
+                                <p class="text-xs text-gray-500 mt-1">{{ $viewingOrder->customer->email }}</p>
+                            @endif
+                        </div>
+
+                        {{-- Cashier --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Cashier</p>
+                            <p class="text-sm font-semibold text-gray-900">
+                                {{ $viewingOrder->user?->name ?? 'Unknown' }}
+                            </p>
+                        </div>
+
+                        {{-- Payment Method --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Payment Method
+                            </p>
+                            <p class="text-sm font-semibold text-gray-900 capitalize">
+                                {{ $viewingOrder->payment_method }}
+                            </p>
+                        </div>
+
+                        {{-- Date --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Date</p>
+                            <p class="text-sm font-semibold text-gray-900">
+                                {{ $viewingOrder->created_at->format('M d, Y') }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">{{ $viewingOrder->created_at->format('h:i A') }}</p>
+                        </div>
+
+                        {{-- Total --}}
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Amount</p>
+                            <p class="text-sm font-semibold text-blue-600">
+                                {{ $currency_symbol }}{{ number_format($viewingOrder->total_amount, 2) }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Line Items Table Container --}}
+                    <div class="bg-white border border-slate-100 rounded-xl p-5">
+                        {{-- Header --}}
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
+                            <h3 class="text-sm font-bold text-gray-900">Line Items</h3>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                {{ $viewingOrder->items->count() }} items
+                            </span>
+                        </div>
+
+                        {{-- Table --}}
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-100">
+                                    <th class="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Product
+                                    </th>
+                                    <th
+                                        class="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                                        Qty</th>
+                                    <th
+                                        class="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                                        Unit Price</th>
+                                    <th
+                                        class="py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                                        Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @forelse($viewingOrder->items as $item)
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="py-3 font-medium text-gray-900">
+                                            {{ $item->product?->name ?? 'Unknown Item' }}
+                                        </td>
+                                        <td class="py-3 text-center text-gray-600">{{ $item->quantity }}</td>
+                                        <td class="py-3 text-right text-gray-600">
+                                            {{ $currency_symbol }}{{ number_format($item->unit_price, 2) }}
+                                        </td>
+                                        <td class="py-3 text-right font-semibold text-gray-900">
+                                            {{ $currency_symbol }}{{ number_format($item->sub_total ?? ($item->quantity * $item->unit_price), 2) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="py-6 text-center text-gray-500 text-sm">
+                                            No items recorded for this order.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                        {{-- Print Button --}}
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex justify-end">
+                            <button
+                                class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                                Print Receipt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
