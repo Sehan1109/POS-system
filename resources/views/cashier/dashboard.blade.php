@@ -10,7 +10,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div
                     class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-blue-500">
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total Revenue</h3>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total </h3>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
                         ${{ number_format($data['total_sales'], 2) }}</p>
                 </div>
