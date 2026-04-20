@@ -91,6 +91,27 @@ jobs:
              grep -q "^DB_DATABASE=" .env && sed -i "s/^DB_DATABASE=.*/DB_DATABASE=pos_system/" .env || echo "DB_DATABASE=pos_system" >> .env
              grep -q "^DB_USERNAME=" .env && sed -i "s/^DB_USERNAME=.*/DB_USERNAME=laraval/" .env || echo "DB_USERNAME=laraval" >> .env
              grep -q "^DB_PASSWORD=" .env && sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=12345678/" .env || echo "DB_PASSWORD=12345678" >> .env
+
+             DB_ADMIN_CMD=""
+             if command -v mysql >/dev/null 2>&1; then
+               if sudo mysql -e "SELECT 1" >/dev/null 2>&1; then
+                 DB_ADMIN_CMD="sudo mysql"
+               elif mysql -uroot -e "SELECT 1" >/dev/null 2>&1; then
+                 DB_ADMIN_CMD="mysql -uroot"
+               fi
+             fi
+
+             if [ -n "$DB_ADMIN_CMD" ]; then
+               echo "Ensuring MySQL database and user exist"
+               $DB_ADMIN_CMD -e "CREATE DATABASE IF NOT EXISTS pos_system;"
+               $DB_ADMIN_CMD -e "CREATE USER IF NOT EXISTS laraval@localhost IDENTIFIED BY \"12345678\";"
+               $DB_ADMIN_CMD -e "ALTER USER laraval@localhost IDENTIFIED BY \"12345678\";"
+               $DB_ADMIN_CMD -e "GRANT ALL PRIVILEGES ON pos_system.* TO laraval@localhost;"
+               $DB_ADMIN_CMD -e "FLUSH PRIVILEGES;"
+             else
+               echo "Could not run MySQL admin commands automatically. Ensure DB user laraval has access to pos_system."
+             fi
+
              composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
              npm ci
              npm run build
