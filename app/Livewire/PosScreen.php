@@ -17,6 +17,10 @@ class PosScreen extends Component
     public $products = [];
     public $activeCategoryId = null;
     public $searchQuery = '';
+    public $activeTab = 'catalog';
+    public $showFlash = true;
+    public $flashMessage = null;
+    public $flashType = null;
 
     public $orders = [];
     public $customers = [];
@@ -53,7 +57,13 @@ class PosScreen extends Component
 
     public function updatedSearchQuery()
     {
-        $this->loadProducts();
+        if ($this->activeTab == 'catalog') {
+            $this->loadProducts();
+        } elseif ($this->activeTab == 'orders') {
+            $this->loadOrders();
+        } elseif ($this->activeTab == 'customers') {
+            $this->loadCustomers();
+        }
     }
 
     public function setCategory($categoryId)
@@ -70,7 +80,7 @@ class PosScreen extends Component
             $query->where('category_id', $this->activeCategoryId);
         }
 
-        if (strlen($this->searchQuery) > 0) {
+        if ($this->activeTab == 'catalog' && strlen($this->searchQuery) > 0) {
             $query->where(function ($query) {
                 $query->where('name', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('barcode', 'like', '%' . $this->searchQuery . '%');
@@ -82,10 +92,18 @@ class PosScreen extends Component
 
     public function loadOrders()
     {
-        $this->orders = Sale::with(['customer', 'user'])
-            ->latest()
-            ->take(12)
-            ->get();
+        $query = Sale::with(['customer', 'user'])->latest();
+
+        if ($this->activeTab == 'orders' && strlen($this->searchQuery) > 0) {
+            $query->where(function ($q) {
+                $q->where('invoice_number', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhereHas('customer', function ($q) {
+                        $q->where('name', 'like', '%' . $this->searchQuery . '%');
+                    });
+            });
+        }
+
+        $this->orders = $query->take(12)->get();
     }
 
     public function viewOrder($orderId)
@@ -94,7 +112,9 @@ class PosScreen extends Component
             ->find($orderId);
 
         if (!$this->viewingOrder) {
-            session()->flash('error', 'Order not found.');
+            $this->flashMessage = 'Order not found.';
+            $this->flashType = 'error';
+            $this->showFlash = true;
         }
     }
 
@@ -105,7 +125,17 @@ class PosScreen extends Component
 
     public function loadCustomers()
     {
-        $this->customers = Customer::latest()->get();
+        $query = Customer::query();
+
+        if ($this->activeTab == 'customers' && strlen($this->searchQuery) > 0) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('phone', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+            });
+        }
+
+        $this->customers = $query->latest()->get();
     }
 
     public function loadSettings()
@@ -139,7 +169,9 @@ class PosScreen extends Component
         $this->reset(['newCustomerName', 'newCustomerPhone', 'newCustomerEmail', 'newCustomerCreditLimit']);
         $this->loadCustomers();
 
-        session()->flash('success', 'Customer added successfully.');
+        $this->flashMessage = 'Customer added successfully.';
+        $this->flashType = 'success';
+        $this->showFlash = true;
     }
 
     public function selectCustomer($customerId)
@@ -147,18 +179,24 @@ class PosScreen extends Component
         $customer = Customer::find($customerId);
 
         if (!$customer) {
-            session()->flash('error', 'Customer not found.');
+            $this->flashMessage = 'Customer not found.';
+            $this->flashType = 'error';
+            $this->showFlash = true;
             return;
         }
 
         $this->selectedCustomerId = $customer->id;
-        session()->flash('success', 'Selected customer: ' . $customer->name);
+        $this->flashMessage = 'Selected customer: ' . $customer->name;
+        $this->flashType = 'success';
+        $this->showFlash = true;
     }
 
     public function clearCustomer()
     {
         $this->selectedCustomerId = null;
-        session()->flash('success', 'Customer selection cleared.');
+        $this->flashMessage = 'Customer selection cleared.';
+        $this->flashType = 'success';
+        $this->showFlash = true;
     }
 
     public function saveSettings()
@@ -180,7 +218,9 @@ class PosScreen extends Component
         Setting::set('tax_rate', $this->taxRate);
 
         $this->loadSettings();
-        session()->flash('success', 'Settings saved.');
+        $this->flashMessage = 'Settings saved.';
+        $this->flashType = 'success';
+        $this->showFlash = true;
     }
 
     public function addToCart($productId)
@@ -188,7 +228,9 @@ class PosScreen extends Component
         $product = Product::find($productId);
 
         if (!$product || $product->stock_quantity <= 0) {
-            session()->flash('error', 'Product out of stock!');
+            $this->flashMessage = 'Product out of stock!';
+            $this->flashType = 'error';
+            $this->showFlash = true;
             return;
         }
 
@@ -204,7 +246,9 @@ class PosScreen extends Component
         if ($existingItemKey !== null) {
             // Check stock limit
             if ($this->cart[$existingItemKey]['quantity'] >= $product->stock_quantity) {
-                session()->flash('error', 'Cannot add more than available stock!');
+                $this->flashMessage = 'Cannot add more than available stock!';
+                $this->flashType = 'error';
+                $this->showFlash = true;
                 return;
             }
 
@@ -245,7 +289,9 @@ class PosScreen extends Component
     public function checkout()
     {
         if (empty($this->cart)) {
-            session()->flash('error', 'Cart is empty!');
+            $this->flashMessage = 'Cart is empty!';
+            $this->flashType = 'error';
+            $this->showFlash = true;
             return;
         }
 
@@ -291,11 +337,15 @@ class PosScreen extends Component
             $this->loadProducts(); // Refresh stock counts
             $this->loadOrders();
 
-            session()->flash('success', 'Payment successful! Order #' . $sale->id);
+            $this->flashMessage = 'Payment successful! Order #' . $sale->id;
+            $this->flashType = 'success';
+            $this->showFlash = true;
 
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Checkout failed: ' . $e->getMessage());
+            $this->flashMessage = 'Checkout failed: ' . $e->getMessage();
+            $this->flashType = 'error';
+            $this->showFlash = true;
         }
     }
 
