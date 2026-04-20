@@ -1,16 +1,12 @@
-<div class="flex flex-col w-full h-screen bg-gray-100 text-gray-900 font-sans overflow-hidden">
+<div class="flex flex-col w-full h-screen bg-gray-100 text-gray-900 font-sans overflow-hidden"
+    x-data="{ isSidebarOpen: false, activeTab: @entangle('activeTab'), userMenuOpen: false, showFlash: @entangle('showFlash'), timeoutId: null }"
+    x-effect="if (showFlash) { clearTimeout(timeoutId); timeoutId = setTimeout(() => $wire.set('showFlash', false), 5000); }">
 
     {{-- Flash Messages --}}
-    @if (session()->has('success'))
-        <div
-            class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session()->has('error'))
-        <div
-            class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold">
-            {{ session('error') }}
+    @if ($flashMessage)
+        <div x-show="showFlash"
+            class="flash-message absolute top-4 left-1/2 transform -translate-x-1/2 {{ $flashType == 'success' ? 'bg-green-500' : 'bg-red-500' }} text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold">
+            {{ $flashMessage }}
         </div>
     @endif
 
@@ -20,19 +16,28 @@
 
         <div class="flex-1 max-w-md mx-8">
             <input type="text" wire:model.live.debounce.300ms="searchQuery"
-                placeholder="Search products or scan barcode..."
+                x-bind:placeholder="activeTab === 'catalog' ? 'Search products or scan barcode...' : activeTab === 'orders' ? 'Search orders by invoice or customer...' : 'Search customers by name, phone or email...'"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
         </div>
 
         <div class="flex items-center gap-4 text-sm">
             <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold text-xs">Register Open</span>
             <span class="text-gray-500">{{ now()->format('h:i A') }}</span>
-            <strong class="font-bold">{{ auth()->user()->name ?? 'Alex Cashier' }}</strong>
+            <div class="relative">
+                <strong @click="userMenuOpen = !userMenuOpen"
+                    class="font-bold cursor-pointer hover:text-blue-600 transition-colors">{{ auth()->user()->name ?? 'Alex Cashier' }}</strong>
+                <div x-show="userMenuOpen" @click.away="userMenuOpen = false"
+                    class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    <a href="/dashboard"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                        Dashboard</a>
+                </div>
+            </div>
         </div>
     </header>
 
     {{-- Main Content --}}
-    <main x-data="{ isSidebarOpen: false, activeTab: 'catalog' }" class="flex flex-1 overflow-hidden">
+    <main class="flex flex-1 overflow-hidden">
 
         {{-- Sidebar --}}
         <nav :class="isSidebarOpen ? 'w-52' : 'w-20'"
