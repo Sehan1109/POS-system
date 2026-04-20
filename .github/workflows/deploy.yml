@@ -42,7 +42,19 @@ jobs:
           ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "set -e; \
-             cd /var/www/pos-system || cd ~/pos-system || cd ~/POS-system; \
+             APP_DIR=''; \
+             for d in /var/www/pos-system /var/www/POS-system /var/www/html/pos-system \"$HOME/pos-system\" \"$HOME/POS-system\" \"$HOME/www/pos-system\"; do \
+               if [ -d \"$d/.git\" ] && [ -f \"$d/artisan\" ]; then APP_DIR=\"$d\"; break; fi; \
+             done; \
+             if [ -z \"$APP_DIR\" ]; then \
+               APP_DIR=\"$(find /var/www \"$HOME\" -maxdepth 5 -type f -name artisan 2>/dev/null | sed 's#/artisan$##' | head -n 1)\"; \
+             fi; \
+             if [ -z \"$APP_DIR\" ]; then \
+               echo 'Could not locate Laravel project directory on server.'; \
+               exit 1; \
+             fi; \
+             cd \"$APP_DIR\"; \
+             echo \"Deploying from $APP_DIR\"; \
              git pull origin main; \
              if [ ! -f .env ]; then cp .env.example .env; fi; \
              grep -q '^DB_CONNECTION=' .env && sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env || echo 'DB_CONNECTION=mysql' >> .env; \
