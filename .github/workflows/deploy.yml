@@ -1,0 +1,51 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to DigitalOcean App Platform
+        uses: digitalocean/app_action@main
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          command: apps create-deployment
+          args: >-
+            --spec=app.yaml
+            --wait
+
+      - name: Notify Deployment Success
+        if: success()
+        run: echo "✅ Deployment to DigitalOcean completed successfully!"
+
+      - name: Notify Deployment Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment to DigitalOcean failed!"
+          exit 1
+
+  post-deploy:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get deployed app info
+        run: |
+          echo "✅ Application deployed successfully to DigitalOcean!"
+          echo "Monitor your app at: https://cloud.digitalocean.com/apps"
+
+      - name: Send notification (optional)
+        run: |
+          echo "You can optionally send a Slack/Discord notification here"
