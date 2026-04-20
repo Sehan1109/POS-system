@@ -42,6 +42,8 @@ jobs:
           ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "set -e; \
+             REPO_URL='https://github.com/${{ github.repository }}.git'; \
+             DEFAULT_DIR=\"$HOME/pos-system\"; \
              APP_DIR=''; \
              for d in /var/www/pos-system /var/www/POS-system /var/www/html/pos-system \"$HOME/pos-system\" \"$HOME/POS-system\" \"$HOME/www/pos-system\"; do \
                if [ -d \"$d/.git\" ] && [ -f \"$d/artisan\" ]; then APP_DIR=\"$d\"; break; fi; \
@@ -50,11 +52,19 @@ jobs:
                APP_DIR=\"$(find /var/www \"$HOME\" -maxdepth 5 -type f -name artisan 2>/dev/null | sed 's#/artisan$##' | head -n 1)\"; \
              fi; \
              if [ -z \"$APP_DIR\" ]; then \
-               echo 'Could not locate Laravel project directory on server.'; \
-               exit 1; \
+               APP_DIR=\"$DEFAULT_DIR\"; \
+               mkdir -p \"$APP_DIR\"; \
+               if [ ! -d \"$APP_DIR/.git\" ]; then \
+                 echo \"Project not found. Cloning repository into $APP_DIR\"; \
+                 git clone \"$REPO_URL\" \"$APP_DIR\"; \
+               fi; \
              fi; \
              cd \"$APP_DIR\"; \
              echo \"Deploying from $APP_DIR\"; \
+             if [ ! -d .git ]; then \
+               echo 'Target directory exists but is not a git repository.'; \
+               exit 1; \
+             fi; \
              git pull origin main; \
              if [ ! -f .env ]; then cp .env.example .env; fi; \
              grep -q '^DB_CONNECTION=' .env && sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env || echo 'DB_CONNECTION=mysql' >> .env; \
