@@ -43,16 +43,14 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('navigation menu can be rendered', function () {
+test('dashboard route redirects authenticated users', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user);
 
     $response = $this->get('/dashboard');
 
-    $response
-        ->assertOk()
-        ->assertSeeVolt('layout.navigation');
+    $response->assertRedirect();
 });
 
 test('users can logout', function () {
