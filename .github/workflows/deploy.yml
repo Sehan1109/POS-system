@@ -83,7 +83,8 @@ jobs:
                git clone "$REPO_URL" .
              fi
 
-             git pull origin main
+             git fetch origin main
+             git reset --hard origin/main
              if [ ! -f .env ]; then cp .env.example .env; fi
              grep -q "^DB_CONNECTION=" .env && sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=mysql/" .env || echo "DB_CONNECTION=mysql" >> .env
              grep -q "^DB_HOST=" .env && sed -i "s/^DB_HOST=.*/DB_HOST=127.0.0.1/" .env || echo "DB_HOST=127.0.0.1" >> .env
