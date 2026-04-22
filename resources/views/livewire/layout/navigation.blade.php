@@ -21,10 +21,18 @@ new class extends Component {
             <div class="flex justify-between h-16">
 
                 <div class="flex">
-                    <!-- Logo -->
+                    <!-- Logo / Title -->
                     <div class="shrink-0 flex items-center">
                         <a href="{{ route('dashboard') }}" wire:navigate>
-                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                            <div class="text-lg font-bold text-gray-800 dark:text-gray-200">
+                                @if(auth()->user()->isAdmin())
+                                    Admin Dashboard
+                                @elseif(auth()->user()->isManager())
+                                    Manager Dashboard
+                                @else
+                                    Cashier Dashboard
+                                @endif
+                            </div>
                         </a>
                     </div>
 
@@ -45,8 +53,7 @@ new class extends Component {
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
 
                                 <!-- FIXED -->
-                                <div x-data="{{ json_encode(['name' => auth()->user()?->name]) }}" x-text="name">
-                                </div>
+                                <div x-data="{ name: '{{ auth()->user()?->name }}' }" x-text="name"></div>
 
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
