@@ -22,7 +22,6 @@ class PosScreen extends Component
     public $flashMessage = null;
     public $flashType = null;
 
-    public $orders = [];
     public $customers = [];
     public $selectedCustomerId = null;
 
@@ -45,12 +44,12 @@ class PosScreen extends Component
     public $total = 0;
     public $paymentMethod = 'cash';
     public $viewingOrder = null;
+    public $orderStarted = false;
 
     public function mount()
     {
         $this->categories = Category::all();
         $this->loadProducts();
-        $this->loadOrders();
         $this->loadCustomers();
         $this->loadSettings();
     }
@@ -59,8 +58,6 @@ class PosScreen extends Component
     {
         if ($this->activeTab == 'catalog') {
             $this->loadProducts();
-        } elseif ($this->activeTab == 'orders') {
-            $this->loadOrders();
         } elseif ($this->activeTab == 'customers') {
             $this->loadCustomers();
         }
@@ -88,39 +85,6 @@ class PosScreen extends Component
         }
 
         $this->products = $query->get();
-    }
-
-    public function loadOrders()
-    {
-        $query = Sale::with(['customer', 'user'])->latest();
-
-        if ($this->activeTab == 'orders' && strlen($this->searchQuery) > 0) {
-            $query->where(function ($q) {
-                $q->where('invoice_number', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhereHas('customer', function ($q) {
-                        $q->where('name', 'like', '%' . $this->searchQuery . '%');
-                    });
-            });
-        }
-
-        $this->orders = $query->take(12)->get();
-    }
-
-    public function viewOrder($orderId)
-    {
-        $this->viewingOrder = Sale::with(['customer', 'user', 'items.product'])
-            ->find($orderId);
-
-        if (!$this->viewingOrder) {
-            $this->flashMessage = 'Order not found.';
-            $this->flashType = 'error';
-            $this->showFlash = true;
-        }
-    }
-
-    public function closeOrderModal()
-    {
-        $this->viewingOrder = null;
     }
 
     public function loadCustomers()
@@ -174,6 +138,35 @@ class PosScreen extends Component
         $this->showFlash = true;
     }
 
+    public function addCustomerAndStart()
+    {
+        $this->validate([
+            'newCustomerName' => 'required|string|max:255',
+            'newCustomerPhone' => 'nullable|string|max:50',
+            'newCustomerEmail' => 'nullable|email|max:255',
+            'newCustomerCreditLimit' => 'nullable|numeric|min:0',
+        ]);
+
+        $customer = Customer::create([
+            'name' => $this->newCustomerName,
+            'phone' => $this->newCustomerPhone,
+            'email' => $this->newCustomerEmail,
+            'credit_limit' => $this->newCustomerCreditLimit ?: 0,
+            'credit_used' => 0,
+        ]);
+
+        $this->reset(['newCustomerName', 'newCustomerPhone', 'newCustomerEmail', 'newCustomerCreditLimit']);
+        $this->loadCustomers();
+
+        $this->selectedCustomerId = $customer->id;
+        $this->orderStarted = true;
+        $this->activeTab = 'catalog';
+
+        $this->flashMessage = 'Customer added and order started.';
+        $this->flashType = 'success';
+        $this->showFlash = true;
+    }
+
     public function selectCustomer($customerId)
     {
         $customer = Customer::find($customerId);
@@ -191,6 +184,31 @@ class PosScreen extends Component
         $this->showFlash = true;
     }
 
+    public function selectCustomerAndStart($customerId)
+    {
+        $this->selectCustomer($customerId);
+        if ($this->selectedCustomerId === $customerId) {
+            $this->orderStarted = true;
+            $this->activeTab = 'catalog';
+        }
+    }
+
+    public function startOrderAsGuest()
+    {
+        $this->selectedCustomerId = null;
+        $this->orderStarted = true;
+        $this->activeTab = 'catalog';
+    }
+
+    public function cancelOrder()
+    {
+        $this->cart = [];
+        $this->calculateTotals();
+        $this->orderStarted = false;
+        $this->selectedCustomerId = null;
+        $this->activeTab = 'catalog';
+    }
+
     public function clearCustomer()
     {
         $this->selectedCustomerId = null;
@@ -199,29 +217,6 @@ class PosScreen extends Component
         $this->showFlash = true;
     }
 
-    public function saveSettings()
-    {
-        $this->validate([
-            'shop_name' => 'required|string|max:255',
-            'shop_address' => 'nullable|string|max:500',
-            'shop_phone' => 'nullable|string|max:100',
-            'currency_symbol' => 'required|string|max:10',
-            'receipt_footer' => 'nullable|string|max:500',
-            'taxRate' => 'required|numeric|min:0',
-        ]);
-
-        Setting::set('shop_name', $this->shop_name);
-        Setting::set('shop_address', $this->shop_address);
-        Setting::set('shop_phone', $this->shop_phone);
-        Setting::set('currency_symbol', $this->currency_symbol);
-        Setting::set('receipt_footer', $this->receipt_footer);
-        Setting::set('tax_rate', $this->taxRate);
-
-        $this->loadSettings();
-        $this->flashMessage = 'Settings saved.';
-        $this->flashType = 'success';
-        $this->showFlash = true;
-    }
 
     public function addToCart($productId)
     {
@@ -335,7 +330,8 @@ class PosScreen extends Component
             $this->cart = [];
             $this->calculateTotals();
             $this->loadProducts(); // Refresh stock counts
-            $this->loadOrders();
+            $this->orderStarted = false; // Reset flow
+            $this->selectedCustomerId = null;
 
             $this->flashMessage = 'Payment successful! Order #' . $sale->id;
             $this->flashType = 'success';
