@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Suppliers List</h3>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Suppliers List</h3>
                     <div class="card-tools">
                         <a href="{{ route('manager.suppliers.create') }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-plus"></i> Add New Supplier
