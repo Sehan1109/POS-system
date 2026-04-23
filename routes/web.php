@@ -132,15 +132,7 @@ Route::prefix('manager')->name('manager.')->middleware(['auth', 'manager'])->gro
 
 // Cashier Routes
 Route::prefix('cashier')->name('cashier.')->middleware(['auth', 'cashier'])->group(function () {
-    Route::get('/dashboard', function () {
-        $data = [
-            'total_sales' => \App\Models\Sale::sum('total_amount'),
-            'total_products' => \App\Models\Product::count(),
-            'low_stock' => \App\Models\Product::where('stock_quantity', '<=', 10)->count(),
-        ];
-        return view('cashier.dashboard', compact('data'));
-    })->name('dashboard');
-    
+    Route::get('/dashboard', \App\Livewire\CashierDashboard::class)->name('dashboard');
     // Cashier POS
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
