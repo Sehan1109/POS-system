@@ -35,7 +35,8 @@
                         Dashboard</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors">
+                        <button type="submit"
+                            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors">
                             Logout
                         </button>
                     </form>
@@ -94,7 +95,8 @@
             <div class="p-5 border-b border-gray-200 flex justify-between items-center">
                 <span class="font-bold">Current Order</span>
                 <div class="flex items-center gap-3">
-                    <button wire:click="cancelOrder" class="text-xs text-red-500 hover:text-red-700 font-bold transition-colors">Cancel</button>
+                    <button wire:click="cancelOrder"
+                        class="text-xs text-red-500 hover:text-red-700 font-bold transition-colors">Cancel</button>
                     <span class="text-blue-600 font-bold">#{{ str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT) }}</span>
                 </div>
             </div>
@@ -170,36 +172,67 @@
 
 
     {{-- Start New Order Modal --}}
-    <div x-show="!$wire.orderStarted" x-cloak class="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl flex flex-col overflow-hidden max-h-[90vh]" @click.stop>
-            <div class="p-6 sm:px-8 sm:py-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50">
-                <div>
-                    <h2 class="text-2xl font-black text-gray-900 tracking-tight">Start New Order</h2>
-                    <p class="text-sm text-gray-500 font-medium mt-1">Who is this order for?</p>
+    <div x-show="!$wire.orderStarted" x-cloak
+        class="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-sm">
+
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl flex flex-col overflow-hidden max-h-[90vh]"
+            @click.stop>
+
+            {{-- Header --}}
+            <div
+                class="p-6 sm:px-8 sm:py-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50">
+
+                <div class="flex items-center gap-4">
+
+                    <!-- 🔙 Back Button -->
+                    <a href="/cashier/dashboard"
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition flex items-center gap-2 shadow-sm">
+                        ← Back
+                    </a>
+
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 tracking-tight">Start New Order</h2>
+                        <p class="text-sm text-gray-500 font-medium mt-1">Who is this order for?</p>
+                    </div>
                 </div>
-                <button wire:click="startOrderAsGuest" class="px-6 py-3 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 text-gray-800 font-bold rounded-xl transition-all flex items-center gap-2 shadow-sm">
+
+                <!-- Walk-in -->
+                <button wire:click="startOrderAsGuest"
+                    class="px-6 py-3 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 text-gray-800 font-bold rounded-xl transition-all flex items-center gap-2 shadow-sm">
                     <span class="text-xl">🚶</span>
                     Proceed as Walk-in Guest
                 </button>
             </div>
+
+            {{-- Body --}}
             <div class="p-6 sm:p-8 overflow-y-auto bg-white flex-1">
+
                 <div class="grid gap-8 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
-                    {{-- Select Existing Customer --}}
+
+                    {{-- Existing Customer --}}
                     <div class="lg:pr-8 flex flex-col h-full">
+
                         <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
                             <span class="text-blue-500">🔍</span> Select Existing Customer
                         </h3>
+
                         <div class="relative mb-4 shrink-0">
-                            <input type="text" wire:model.live.debounce.300ms="searchQuery" placeholder="Search by name, phone, or email..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium">
+                            <input type="text" wire:model.live.debounce.300ms="searchQuery"
+                                placeholder="Search by name, phone, or email..."
+                                class="w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium">
+
                             <div class="absolute left-4 top-3.5 text-slate-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                                </svg>
+                                🔎
                             </div>
                         </div>
-                        <div class="flex-1 overflow-y-auto border border-slate-100 rounded-xl divide-y divide-slate-100 min-h-[300px]">
+
+                        <div
+                            class="flex-1 overflow-y-auto border border-slate-100 rounded-xl divide-y divide-slate-100 min-h-[300px]">
+
                             @forelse($customers as $customer)
-                                <div wire:click="selectCustomerAndStart({{ $customer->id }})" class="p-4 hover:bg-blue-50 cursor-pointer flex justify-between items-center transition-colors group">
+                                <div wire:click="selectCustomerAndStart({{ $customer->id }})"
+                                    class="p-4 hover:bg-blue-50 cursor-pointer flex justify-between items-center transition-colors group">
+
                                     <div>
                                         <div class="font-bold text-gray-900">{{ $customer->name }}</div>
                                         <div class="text-xs text-gray-500 flex items-center gap-3 mt-1">
@@ -207,7 +240,9 @@
                                             <span>✉️ {{ $customer->email ?? 'N/A' }}</span>
                                         </div>
                                     </div>
-                                    <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-blue-600 text-sm font-bold shadow-sm group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+
+                                    <button
+                                        class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-blue-600 text-sm font-bold shadow-sm group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
                                         Select
                                     </button>
                                 </div>
@@ -220,44 +255,65 @@
                         </div>
                     </div>
 
-                    {{-- Register New Customer --}}
+                    {{-- New Customer --}}
                     <div class="pt-8 lg:pt-0 lg:pl-8">
+
                         <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
                             <span class="text-green-500">✨</span> Register New Customer
                         </h3>
+
                         <div class="space-y-4">
+
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
-                                <input wire:model.defer="newCustomerName" type="text" class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all" placeholder="e.g. John Doe" />
-                                @error('newCustomerName') <span class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</span> @enderror
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    Full Name <span class="text-red-500">*</span>
+                                </label>
+                                <input wire:model.defer="newCustomerName" type="text"
+                                    class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                    placeholder="e.g. John Doe" />
+                                @error('newCustomerName')
+                                    <span class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</span>
+                                @enderror
                             </div>
+
                             <div class="grid grid-cols-2 gap-4">
+
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
-                                    <input wire:model.defer="newCustomerPhone" type="text" class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all" placeholder="Optional" />
-                                    @error('newCustomerPhone') <span class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</span> @enderror
+                                    <input wire:model.defer="newCustomerPhone" type="text"
+                                        class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                        placeholder="Optional" />
                                 </div>
+
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Credit Limit</label>
-                                    <input wire:model.defer="newCustomerCreditLimit" type="number" step="0.01" class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all" placeholder="0.00" />
-                                    @error('newCustomerCreditLimit') <span class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</span> @enderror
+                                    <input wire:model.defer="newCustomerCreditLimit" type="number" step="0.01"
+                                        class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                        placeholder="0.00" />
                                 </div>
                             </div>
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                                <input wire:model.defer="newCustomerEmail" type="email" class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all" placeholder="Optional" />
-                                @error('newCustomerEmail') <span class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</span> @enderror
+                                <input wire:model.defer="newCustomerEmail" type="email"
+                                    class="block w-full bg-slate-50 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                    placeholder="Optional" />
                             </div>
-                            <button wire:click="addCustomerAndStart" class="w-full mt-4 rounded-xl bg-blue-600 px-4 py-4 text-white font-bold text-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2">
-                                Register & Start Order
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                </svg>
+
+                            <button wire:click="addCustomerAndStart"
+                                class="w-full mt-4 rounded-xl bg-blue-600 px-4 py-4 text-white font-bold text-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2">
+                                Register & Start Order →
                             </button>
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+</div>
+</div>
+</div>
+</div>
 </div>
