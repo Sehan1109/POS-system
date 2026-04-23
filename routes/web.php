@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Manager\SupplierController as ManagerSupplierController;
 use App\Http\Controllers\Manager\SaleController as ManagerSaleController;
+use App\Http\Controllers\Manager\ActivityLogController as ManagerActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -126,8 +127,9 @@ Route::prefix('manager')->name('manager.')->middleware(['auth', 'manager'])->gro
     Route::get('reports/stock', [Admin\ReportController::class, 'stock'])->name('reports.stock');
     Route::get('reports/expenses', [Admin\ReportController::class, 'expenses'])->name('reports.expenses');
 
-    // Activity Logs
-    Route::get('activity-logs', [Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    // Activity Logs - Using Manager Controller
+    Route::get('activity-logs', [ManagerActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('activity-logs/{activityLog}', [ManagerActivityLogController::class, 'show'])->name('activity-logs.show');
 });
 
 // Cashier Routes

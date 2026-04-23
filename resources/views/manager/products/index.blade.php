@@ -5,8 +5,8 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Products Management</h3>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Products Management</h3>
                     <div class="card-tools">
                         <a href="{{ route('manager.products.create') }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-plus"></i> Add New Product
@@ -57,7 +57,7 @@
                                     <th>Selling Price</th>
                                     <th>Stock</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th width="180">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,17 +118,22 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ route('manager.products.show', $product) }}" class="btn btn-info">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="{{ route('manager.products.show', $product) }}" 
+                                               class="btn btn-info btn-sm" 
+                                               style="width: 65px; height: 32px; line-height: 18px;">
                                                 <i class="fas fa-eye"></i> View
                                             </a>
-                                            <a href="{{ route('manager.products.edit', $product) }}" class="btn btn-warning">
+                                            <a href="{{ route('manager.products.edit', $product) }}" 
+                                               class="btn btn-warning btn-sm" 
+                                               style="width: 65px; height: 32px; line-height: 18px;">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
                                             <form action="{{ route('manager.products.destroy', $product) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">
+                                                <button type="submit" class="btn btn-danger btn-sm" 
+                                                        style="width: 75px; height: 32px; line-height: 18px;">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>
@@ -156,4 +161,31 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 0.2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .btn-sm i {
+        font-size: 0.7rem;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+    
+    .gap-2 {
+        gap: 8px;
+    }
+</style>
+@endpush
+
 @endsection
