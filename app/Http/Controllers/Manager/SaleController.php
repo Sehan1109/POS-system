@@ -76,6 +76,13 @@ class SaleController extends Controller
                 ]);
             }
             
+            // Log activity
+            ActivityLog::record(
+                'created',
+                "New sale created via Manager dashboard. Invoice: {$invoiceNumber}. Total: {$totalAmount}",
+                $sale
+            );
+
             DB::commit();
             
             return redirect()->route('manager.sales.show', $sale)->with('success', 'Sale completed successfully.');
