@@ -11,10 +11,25 @@
                         <a href="{{ route('manager.products.index') }}" class="btn btn-default btn-sm">Back</a>
                     </div>
                 </div>
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-1"></i> {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                </div>
                 <form action="{{ route('manager.products.update', $product) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
+                    <div class="card-body pt-0">
                         <div class="form-group">
                             <label for="name">Product Name *</label>
                             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $product->name) }}" required>

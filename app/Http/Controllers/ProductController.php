@@ -82,8 +82,8 @@ class ProductController extends Controller
             
             // Log activity
             ActivityLog::record(
-                'product_created',
-                "Created new product: {$product->name} with stock: {$product->stock_quantity}",
+                'created',
+                "Created new product: {$product->name} with initial stock: {$product->stock_quantity}",
                 $product
             );
             
@@ -169,7 +169,7 @@ class ProductController extends Controller
             }
             
             ActivityLog::record(
-                'product_updated',
+                'updated',
                 "Updated product: {$product->name}",
                 $product
             );
@@ -209,7 +209,7 @@ class ProductController extends Controller
             $product->delete();
             
             ActivityLog::record(
-                'product_deleted',
+                'deleted',
                 "Deleted product: {$productName}",
                 null
             );

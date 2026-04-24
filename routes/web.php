@@ -76,6 +76,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Reports
     Route::get('reports/sales', [Admin\ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('reports/sales/daily-details', [Admin\ReportController::class, 'dailyDetails'])->name('reports.sales.daily-details');
+    Route::get('reports/sales/download-daily', [Admin\ReportController::class, 'downloadDaily'])->name('reports.sales.download-daily');
     Route::get('reports/profit', [Admin\ReportController::class, 'profit'])->name('reports.profit');
     Route::get('reports/stock', [Admin\ReportController::class, 'stock'])->name('reports.stock');
     Route::get('reports/expenses', [Admin\ReportController::class, 'expenses'])->name('reports.expenses');
@@ -123,6 +125,8 @@ Route::prefix('manager')->name('manager.')->middleware(['auth', 'manager'])->gro
 
     // Reports
     Route::get('reports/sales', [Admin\ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('reports/sales/daily-details', [Admin\ReportController::class, 'dailyDetails'])->name('reports.sales.daily-details');
+    Route::get('reports/sales/download-daily', [Admin\ReportController::class, 'downloadDaily'])->name('reports.sales.download-daily');
     Route::get('reports/profit', [Admin\ReportController::class, 'profit'])->name('reports.profit');
     Route::get('reports/stock', [Admin\ReportController::class, 'stock'])->name('reports.stock');
     Route::get('reports/expenses', [Admin\ReportController::class, 'expenses'])->name('reports.expenses');

@@ -54,14 +54,25 @@ class POSController extends Controller
 
             $finalAmount = max(0, $totalAmount - $discount);
 
+            $invoiceNumber = 'INV-' . date('Ymd') . '-' . str_pad(Sale::count() + 1, 4, '0', STR_PAD_LEFT);
+
             // 2. Create the Sale record
             $sale = Sale::create([
                 // Defaulting to 1 for testing if no auth user is present yet
                 'user_id'        => auth()->id() ?? 1, 
+                'invoice_number' => $invoiceNumber,
                 'total_amount'   => $finalAmount,
                 'discount'       => $discount,
                 'payment_method' => $request->payment_method,
+                'status'         => 'completed',
             ]);
+
+            // Log activity
+            ActivityLog::record(
+                'created',
+                "Sale completed via POS. Invoice: {$invoiceNumber}. Total: {$finalAmount}",
+                $sale
+            );
 
             // 3. Create Sale Items & Deduct Stock
             foreach ($request->items as $item) {

@@ -9,6 +9,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
@@ -28,7 +29,69 @@ class ReportController extends Controller
         $totalRevenue = $sales->sum('revenue');
         $totalCount   = $sales->sum('count');
 
-        return view('admin.reports.sales', compact('sales', 'totalRevenue', 'totalCount', 'dateFrom', 'dateTo'));
+        // Determine the correct route prefix based on the current user's role
+        $routePrefix = auth()->user()->isAdmin() ? 'admin' : 'manager';
+        $dailyDetailsUrl  = route($routePrefix . '.reports.sales.daily-details');
+        $downloadDailyUrl = route($routePrefix . '.reports.sales.download-daily');
+
+        return view('admin.reports.sales', compact(
+            'sales', 'totalRevenue', 'totalCount', 'dateFrom', 'dateTo',
+            'dailyDetailsUrl', 'downloadDailyUrl'
+        ));
+    }
+
+    public function dailyDetails(Request $request)
+    {
+        $date = $request->get('date', now()->toDateString());
+
+        $sales = Sale::with('customer')
+            ->whereDate('created_at', $date)
+            ->where('status', '!=', 'refunded')
+            ->get()
+            ->map(function ($sale) {
+                return [
+                    'id'             => $sale->id,
+                    'invoice_number' => $sale->invoice_number ?? 'N/A',
+                    'customer_name'  => optional($sale->customer)->name ?? 'Walk-in',
+                    'amount'         => number_format($sale->total_amount, 2),
+                ];
+            });
+
+        return response()->json($sales);
+    }
+
+    public function downloadDaily(Request $request): StreamedResponse
+    {
+        $date = $request->get('date', now()->toDateString());
+
+        $sales = Sale::with('customer')
+            ->whereDate('created_at', $date)
+            ->where('status', '!=', 'refunded')
+            ->get();
+
+        $filename = 'sales-report-' . $date . '.csv';
+
+        return response()->streamDownload(function () use ($sales) {
+            $handle = fopen('php://output', 'w');
+
+            // CSV Header
+            fputcsv($handle, ['Invoice #', 'Customer', 'Payment Method', 'Total Amount', 'Time']);
+
+            foreach ($sales as $sale) {
+                fputcsv($handle, [
+                    $sale->invoice_number ?? 'N/A',
+                    optional($sale->customer)->name ?? 'Walk-in',
+                    ucfirst($sale->payment_method ?? ''),
+                    number_format($sale->total_amount, 2),
+                    $sale->created_at->format('H:i:s'),
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     public function profit(Request $request)
