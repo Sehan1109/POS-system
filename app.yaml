@@ -1,11 +1,22 @@
 name: pos-system
+
 services:
   - name: pos-system-web
     github:
       branch: main
       repo: YOUR_GITHUB_USERNAME/POS-system
-    build_command: composer install && npm install && npm run build
+
+    build_command: |
+      composer install --no-dev --optimize-autoloader &&
+      npm install &&
+      npm run build &&
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
+      php artisan migrate --force
+
     run_command: heroku-php-apache2 public/
+
     envs:
       - key: APP_NAME
         value: "POS System"
@@ -13,8 +24,6 @@ services:
         value: production
       - key: APP_DEBUG
         value: "false"
-      - key: APP_LOG
-        value: single
       - key: LOG_CHANNEL
         value: stack
       - key: SESSION_DRIVER
@@ -23,14 +32,16 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: database
-      - key: QUEUE_FAILED_TABLE
-        value: failed_jobs
+
     envs_from_env_file: true
+
     health_check:
       http_path: /
+
     http_port: 8080
     internal_ports:
       - 8080
+
     instance_count: 1
     instance_size_slug: basic-s
 
@@ -39,14 +50,6 @@ databases:
     engine: MYSQL
     version: "8"
     production: true
-
-static_sites:
-  - source_dir: public
-    name: pos-system-static
-    envs_from_env_file: true
-    github:
-      branch: main
-      repo: YOUR_GITHUB_USERNAME/POS-system
 
 ingress:
   rules:
