@@ -49,7 +49,8 @@ class ProductController extends Controller
         $products = $query->latest()->paginate(15);
         $categories = Category::all();
         
-        return view('manager.products.index', compact('products', 'categories'));
+        $role = auth()->user()->role;
+        return view("{$role}.products.index", compact('products', 'categories'));
     }
 
     /**
@@ -58,7 +59,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('manager.products.create', compact('categories'));
+        $role = auth()->user()->role;
+        return view("{$role}.products.create", compact('categories'));
     }
 
     /**
@@ -89,8 +91,9 @@ class ProductController extends Controller
             
             DB::commit();
             
+            $role = auth()->user()->role;
             return redirect()
-                ->route('manager.products.index')
+                ->route("{$role}.products.index")
                 ->with('success', 'Product created successfully.');
                 
         } catch (\Exception $e) {
@@ -125,7 +128,8 @@ class ProductController extends Controller
             ->limit(20)
             ->get();
             
-        return view('manager.products.show', compact('product', 'recentSales', 'stockMovements'));
+        $role = auth()->user()->role;
+        return view("{$role}.products.show", compact('product', 'recentSales', 'stockMovements'));
     }
 
     /**
@@ -134,7 +138,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        return view('manager.products.edit', compact('product', 'categories'));
+        $role = auth()->user()->role;
+        return view("{$role}.products.edit", compact('product', 'categories'));
     }
 
     /**
@@ -176,8 +181,9 @@ class ProductController extends Controller
             
             DB::commit();
             
+            $role = auth()->user()->role;
             return redirect()
-                ->route('manager.products.index')
+                ->route("{$role}.products.index")
                 ->with('success', 'Product updated successfully.');
                 
         } catch (\Exception $e) {
@@ -216,15 +222,17 @@ class ProductController extends Controller
             
             DB::commit();
             
+            $role = auth()->user()->role;
             return redirect()
-                ->route('manager.products.index')
+                ->route("{$role}.products.index")
                 ->with('success', "Product '{$productName}' deleted successfully.");
                 
         } catch (\Exception $e) {
             DB::rollBack();
             
+            $role = auth()->user()->role;
             return redirect()
-                ->route('manager.products.index')
+                ->route("{$role}.products.index")
                 ->with('error', 'Failed to delete product: ' . $e->getMessage());
         }
     }
@@ -273,8 +281,9 @@ class ProductController extends Controller
             
             DB::commit();
             
+            $role = auth()->user()->role;
             return redirect()
-                ->route('manager.products.show', $product)
+                ->route("{$role}.products.show", $product)
                 ->with('success', "Stock adjusted successfully. {$adjustmentDescription}. New stock: {$product->stock_quantity}");
                 
         } catch (\Exception $e) {
