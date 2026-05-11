@@ -58,7 +58,10 @@ class PosScreen extends Component
     {
         if ($this->activeTab == 'catalog') {
             $this->loadProducts();
-        } elseif ($this->activeTab == 'customers') {
+        }
+
+        // Always load customers if we haven't started an order yet (modal search)
+        if (!$this->orderStarted || $this->activeTab == 'customers') {
             $this->loadCustomers();
         }
     }
@@ -91,7 +94,8 @@ class PosScreen extends Component
     {
         $query = Customer::query();
 
-        if ($this->activeTab == 'customers' && strlen($this->searchQuery) > 0) {
+        // Search if we have a query AND (we are in the modal OR we are in the customers tab)
+        if (strlen($this->searchQuery) > 0 && (!$this->orderStarted || $this->activeTab == 'customers')) {
             $query->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('phone', 'like', '%' . $this->searchQuery . '%')
@@ -99,7 +103,7 @@ class PosScreen extends Component
             });
         }
 
-        $this->customers = $query->latest()->get();
+        $this->customers = $query->latest()->limit(20)->get();
     }
 
     public function loadSettings()
@@ -187,9 +191,12 @@ class PosScreen extends Component
     public function selectCustomerAndStart($customerId)
     {
         $this->selectCustomer($customerId);
-        if ($this->selectedCustomerId === $customerId) {
+        
+        // If selectCustomer succeeded (didn't return early due to error)
+        if ($this->selectedCustomerId) {
             $this->orderStarted = true;
             $this->activeTab = 'catalog';
+            $this->searchQuery = ''; // Clear search to show all products
         }
     }
 

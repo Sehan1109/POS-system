@@ -52,7 +52,13 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @php
-                            $actionColors = ['created'=>'bg-green-100 text-green-700','updated'=>'bg-blue-100 text-blue-700','deleted'=>'bg-red-100 text-red-700','login'=>'bg-purple-100 text-purple-700','logout'=>'bg-gray-100 text-gray-600'];
+                            $actionColors = [
+                                'created' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                                'updated' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                'deleted' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                                'login' => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+                                'logout' => 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
+                            ];
                         @endphp
                         @forelse($logs as $log)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">

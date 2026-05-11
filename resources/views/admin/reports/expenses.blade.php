@@ -48,11 +48,11 @@
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($expenses as $e)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $e->expense_date->format('d M Y') }}</td>
-                            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-700 font-semibold">{{ $e->category }}</span></td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $e->expense_date->format('d M Y') }}</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 font-semibold">{{ $e->category }}</span></td>
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $e->description }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $e->user->name }}</td>
-                            <td class="px-6 py-4 text-sm font-semibold text-right text-orange-600">${{ number_format($e->amount, 2) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $e->user->name }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-right text-orange-600 dark:text-orange-400">${{ number_format($e->amount, 2) }}</td>
                         </tr>
                         @empty
                         <tr><td colspan="5" class="px-6 py-8 text-center text-gray-400">No expenses in this period.</td></tr>

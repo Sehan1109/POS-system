@@ -46,6 +46,11 @@ new class extends Component {
 
                 <!-- Settings Dropdown -->
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
+                    <!-- Theme Toggle -->
+                    <div class="me-3">
+                        <x-theme-toggle />
+                    </div>
+
                     <x-dropdown align="right" width="48">
 
                         <x-slot name="trigger">
@@ -104,6 +109,10 @@ new class extends Component {
                 <x-responsive-nav-link :href="route('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
+
+                <div class="px-4 py-2">
+                    <x-theme-toggle />
+                </div>
             </div>
 
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

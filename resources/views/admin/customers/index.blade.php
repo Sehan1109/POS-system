@@ -29,16 +29,16 @@
                         @forelse($customers as $customer)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $customer->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $customer->phone ?? '—' }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $customer->email ?? '—' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $customer->phone ?? '—' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $customer->email ?? '—' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">${{ number_format($customer->credit_limit, 2) }}</td>
-                            <td class="px-6 py-4 text-sm {{ $customer->credit_used > 0 ? 'text-red-600 font-semibold' : 'text-gray-500' }}">${{ number_format($customer->credit_used, 2) }}</td>
+                            <td class="px-6 py-4 text-sm {{ $customer->credit_used > 0 ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">${{ number_format($customer->credit_used, 2) }}</td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('admin.customers.edit', $customer) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                <a href="{{ route('admin.customers.edit', $customer) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium">Edit</a>
                                 <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Delete this customer?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Delete</button>
+                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm font-medium">Delete</button>
                                 </form>
                             </td>
                         </tr>

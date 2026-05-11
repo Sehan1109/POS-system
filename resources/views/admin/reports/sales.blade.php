@@ -56,7 +56,7 @@
                                     {{ \Carbon\Carbon::parse($row->date)->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $row->count }}</td>
-                                <td class="px-6 py-4 text-sm font-semibold text-indigo-600">
+                                <td class="px-6 py-4 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
                                     ${{ number_format($row->revenue, 2) }}</td>
                             </tr>
                         @empty
@@ -104,7 +104,7 @@
                                     <tr class="border-b dark:border-gray-700">
                                         <td class="py-2" x-text="item.invoice_number"></td>
                                         <td class="py-2" x-text="item.customer_name"></td>
-                                        <td class="py-2 text-right text-indigo-600" x-text="'$' + item.amount"></td>
+                                        <td class="py-2 text-right text-indigo-600 dark:text-indigo-400" x-text="'$' + item.amount"></td>
                                     </tr>
                                 </template>
                                 <tr x-show="dailyDetails.length === 0">
