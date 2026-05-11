@@ -11,8 +11,16 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-    <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Dark Mode Logic -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
 
 <body class="antialiased font-sans">
@@ -31,9 +39,12 @@
                                 fill="currentColor" />
                         </svg>
                     </div>
-                    @if (Route::has('login'))
-                        <livewire:welcome.navigation />
-                    @endif
+                    <div class="flex items-center lg:justify-end lg:col-start-3 gap-4">
+                        <x-theme-toggle />
+                        @if (Route::has('login'))
+                            <livewire:welcome.navigation />
+                        @endif
+                    </div>
                 </header>
 
                 <main class="mt-6">

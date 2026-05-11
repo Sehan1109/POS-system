@@ -3,8 +3,8 @@
 @section('content')
 <div class="sm:flex sm:items-center sm:justify-between mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Products</h1>
-        <p class="mt-1 text-sm text-gray-600">A list of all products in your inventory.</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Products</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">A list of all products in your inventory.</p>
     </div>
     <div class="mt-4 sm:mt-0">
         <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm">
@@ -23,9 +23,9 @@
     </div>
 @endif
 
-<div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+<div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700/50">
             <tr>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name / Barcode</th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
@@ -34,29 +34,28 @@
                 <th scope="col" class="relative px-6 py-3"><span class="sr-only">Edit</span></th>
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             @foreach ($products as $product)
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
-                    <div class="text-sm text-gray-500">{{ $product->barcode }}</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $product->name }}</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">{{ $product->barcode }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                         {{ $product->category->name }}
                     </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     ${{ number_format($product->selling_price, 2) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="text-sm {{ $product->stock_quantity <= 5 ? 'text-red-600 font-bold' : 'text-gray-900' }}">
+                    <span class="text-sm {{ $product->stock_quantity <= 5 ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-900 dark:text-gray-300' }}">
                         {{ $product->stock_quantity }}
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{{ route('products.edit', $product) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                    <!-- Delete form would go here -->
+                    <a href="{{ route('products.edit', $product) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-3">Edit</a>
                 </td>
             </tr>
             @endforeach
@@ -64,7 +63,7 @@
     </table>
     
     @if($products->hasPages())
-        <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+        <div class="bg-white dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
             {{ $products->links() }}
         </div>
     @endif

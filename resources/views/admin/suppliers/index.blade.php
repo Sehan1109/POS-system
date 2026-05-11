@@ -32,11 +32,11 @@
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $supplier->phone ?? '—' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $supplier->email ?? '—' }}</td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('admin.suppliers.edit', $supplier) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                <a href="{{ route('admin.suppliers.edit', $supplier) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium">Edit</a>
                                 <form action="{{ route('admin.suppliers.destroy', $supplier) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Delete this supplier?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Delete</button>
+                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm font-medium">Delete</button>
                                 </form>
                             </td>
                         </tr>

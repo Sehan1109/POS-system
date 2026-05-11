@@ -40,11 +40,11 @@
                             </td>
                             <td class="px-6 py-4">
                                 @if($product->stock_quantity === 0)
-                                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 font-semibold">Out of Stock</span>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-semibold">Out of Stock</span>
                                 @elseif($product->stock_quantity <= 10)
-                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">Low Stock</span>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 font-semibold">Low Stock</span>
                                 @else
-                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 font-semibold">In Stock</span>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 font-semibold">In Stock</span>
                                 @endif
                             </td>
                         </tr>

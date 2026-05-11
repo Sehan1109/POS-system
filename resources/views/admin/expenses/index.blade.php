@@ -28,19 +28,19 @@
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($expenses as $expense)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $expense->expense_date->format('d M Y') }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $expense->expense_date->format('d M Y') }}</td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-700 font-semibold">{{ $expense->category }}</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 font-semibold">{{ $expense->category }}</span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $expense->description }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">${{ number_format($expense->amount, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $expense->user->name }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $expense->user->name }}</td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('admin.expenses.edit', $expense) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                <a href="{{ route('admin.expenses.edit', $expense) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium">Edit</a>
                                 <form action="{{ route('admin.expenses.destroy', $expense) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Delete this expense?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Delete</button>
+                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm font-medium">Delete</button>
                                 </form>
                             </td>
                         </tr>

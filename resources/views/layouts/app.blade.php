@@ -18,8 +18,16 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Dark Mode Logic -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 
     @stack('styles')
 </head>
@@ -37,16 +45,16 @@
                                 <a href="{{ route('dashboard') }}" class="no-underline">
                                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">
                                         @if(auth()->user()->isAdmin())
-                                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Control
+                                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">Control
                                                 Center</p>
-                                            <h2 class="text-2xl font-bold text-slate-900 leading-tight">
+                                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white leading-tight">
                                                 {{ __('Admin Dashboard') }}
                                             </h2>
 
                                         @elseif(auth()->user()->isManager())
-                                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                                                 Operations Desk</p>
-                                            <h2 class="text-2xl font-bold text-slate-900 leading-tight">
+                                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white leading-tight">
                                                 {{ __('Manager Dashboard') }}
                                             </h2>
                                         @else
@@ -95,10 +103,15 @@
 
                         <!-- Settings Dropdown -->
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <!-- Theme Toggle -->
+                            <div class="me-3">
+                                <x-theme-toggle />
+                            </div>
+
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-600 dark:text-gray-200 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 shadow-sm">
                                         <div>{{ Auth::user()->name }}</div>
                                         <div class="ms-1">
                                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"

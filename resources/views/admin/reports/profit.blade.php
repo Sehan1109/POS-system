@@ -60,10 +60,10 @@
                         @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $first->product->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $qty }}</td>
-                            <td class="px-6 py-4 text-sm text-blue-600 font-semibold">${{ number_format($rev, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-red-500">${{ number_format($cost, 2) }}</td>
-                            <td class="px-6 py-4 text-sm font-bold {{ $profit >= 0 ? 'text-green-600' : 'text-red-600' }}">${{ number_format($profit, 2) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $qty }}</td>
+                            <td class="px-6 py-4 text-sm text-blue-600 dark:text-blue-400 font-semibold">${{ number_format($rev, 2) }}</td>
+                            <td class="px-6 py-4 text-sm text-red-500 dark:text-red-400">${{ number_format($cost, 2) }}</td>
+                            <td class="px-6 py-4 text-sm font-bold {{ $profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">${{ number_format($profit, 2) }}</td>
                         </tr>
                         @empty
                         <tr><td colspan="5" class="px-6 py-8 text-center text-gray-400">No data in this period.</td></tr>

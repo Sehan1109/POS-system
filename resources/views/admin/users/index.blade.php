@@ -50,7 +50,7 @@
                                 <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</td>
                                 <td class="px-6 py-4">
                                     <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $user->role === 'manager' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
+                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $user->role === 'manager' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
@@ -58,13 +58,13 @@
                                     {{ $user->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ route('admin.users.edit', $user) }}"
-                                        class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium">Edit</a>
                                     @if($user->id !== auth()->id())
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline"
                                             onsubmit="return confirm('Delete this user?')">
                                             @csrf @method('DELETE')
                                             <button type="submit"
-                                                class="text-red-600 hover:text-red-900 text-sm font-medium">Delete</button>
+                                                class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm font-medium">Delete</button>
                                         </form>
                                     @endif
                                 </td>

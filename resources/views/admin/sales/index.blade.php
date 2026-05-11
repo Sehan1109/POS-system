@@ -49,23 +49,28 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @php
-                            $sc=['completed'=>'bg-green-100 text-green-700','refund_requested'=>'bg-yellow-100 text-yellow-700','refunded'=>'bg-red-100 text-red-700','cancelled'=>'bg-gray-100 text-gray-700'];
+                            $sc = [
+                                'completed' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                                'refund_requested' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+                                'refunded' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                                'cancelled' => 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400'
+                            ];
                         @endphp
                         @forelse($sales as $sale)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-6 py-4 text-sm text-gray-500">#{{ $sale->id }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">#{{ $sale->id }}</td>
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $sale->user->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $sale->customer?->name ?? '—' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $sale->customer?->name ?? '—' }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">${{ number_format($sale->total_amount, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ ucfirst($sale->payment_method) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ ucfirst($sale->payment_method) }}</td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $sc[$sale->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $sc[$sale->status] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' }}">
                                     {{ ucfirst(str_replace('_',' ',$sale->status)) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $sale->created_at->format('d M Y') }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $sale->created_at->format('d M Y') }}</td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('admin.sales.show', $sale) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">View</a>
+                                <a href="{{ route('admin.sales.show', $sale) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium">View</a>
                             </td>
                         </tr>
                         @empty
