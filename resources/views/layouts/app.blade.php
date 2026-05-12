@@ -91,11 +91,39 @@
                                         :active="request()->routeIs('admin.expenses.*')">
                                         Expenses
                                     </x-nav-link>
-                                    <x-nav-link :href="route('admin.reports.sales')"
+                                    <x-nav-link :href="route('admin.reports.index')"
                                         :active="request()->routeIs('admin.reports.*')">
                                         Reports
                                     </x-nav-link>
                                 @elseif(auth()->user()->isManager())
+                                    <x-nav-link :href="route('manager.dashboard')"
+                                        :active="request()->routeIs('manager.dashboard')">
+                                        Dashboard
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.products.index')"
+                                        :active="request()->routeIs('manager.products.*')">
+                                        Products
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.suppliers.index')"
+                                        :active="request()->routeIs('manager.suppliers.*')">
+                                        Suppliers
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.sales.index')"
+                                        :active="request()->routeIs('manager.sales.*')">
+                                        Sales
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.customers.index')"
+                                        :active="request()->routeIs('manager.customers.*')">
+                                        Customers
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.expenses.index')"
+                                        :active="request()->routeIs('manager.expenses.*')">
+                                        Expenses
+                                    </x-nav-link>
+                                    <x-nav-link :href="route('manager.reports.index')"
+                                        :active="request()->routeIs('manager.reports.*')">
+                                        Reports
+                                    </x-nav-link>
 
                                 @endif
                             </div>

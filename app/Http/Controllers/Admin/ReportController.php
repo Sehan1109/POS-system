@@ -13,6 +13,22 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
+    public function index()
+    {
+        $todaySales = Sale::whereDate('created_at', now()->toDateString())
+            ->where('status', '!=', 'refunded')
+            ->sum('total_amount');
+        
+        $lowStockCount = Product::where('stock_quantity', '<=', 10)->count();
+        $totalCustomers = \App\Models\Customer::count();
+        $monthlyRevenue = Sale::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->where('status', '!=', 'refunded')
+            ->sum('total_amount');
+
+        return view('admin.reports.index', compact('todaySales', 'lowStockCount', 'totalCustomers', 'monthlyRevenue'));
+    }
+
     public function sales(Request $request)
     {
         $period = $request->get('period', 'monthly');
@@ -120,6 +136,32 @@ class ReportController extends Controller
         $outOfStock  = Product::where('stock_quantity', 0)->count();
 
         return view('admin.reports.stock', compact('products', 'lowStock', 'outOfStock'));
+    }
+
+    public function inventory()
+    {
+        $products = Product::with('category')->get();
+        
+        $totalCostValue = $products->sum(fn($p) => $p->cost_price * $p->stock_quantity);
+        $totalRetailValue = $products->sum(fn($p) => $p->selling_price * $p->stock_quantity);
+        $potentialProfit = $totalRetailValue - $totalCostValue;
+
+        return view('admin.reports.inventory', compact('products', 'totalCostValue', 'totalRetailValue', 'potentialProfit'));
+    }
+
+    public function customers()
+    {
+        $customers = \App\Models\Customer::withCount(['sales' => function($q) {
+            $q->where('status', '!=', 'refunded');
+        }])
+        ->withSum(['sales' => function($q) {
+            $q->where('status', '!=', 'refunded');
+        }], 'total_amount')
+        ->orderByDesc('sales_sum_total_amount')
+        ->limit(50)
+        ->get();
+
+        return view('admin.reports.customers', compact('customers'));
     }
 
     public function expenses(Request $request)
