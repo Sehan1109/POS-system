@@ -75,11 +75,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('expenses', Admin\ExpenseController::class);
 
     // Reports
+    Route::get('reports', [Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/sales', [Admin\ReportController::class, 'sales'])->name('reports.sales');
     Route::get('reports/sales/daily-details', [Admin\ReportController::class, 'dailyDetails'])->name('reports.sales.daily-details');
     Route::get('reports/sales/download-daily', [Admin\ReportController::class, 'downloadDaily'])->name('reports.sales.download-daily');
     Route::get('reports/profit', [Admin\ReportController::class, 'profit'])->name('reports.profit');
     Route::get('reports/stock', [Admin\ReportController::class, 'stock'])->name('reports.stock');
+    Route::get('reports/inventory', [Admin\ReportController::class, 'inventory'])->name('reports.inventory');
+    Route::get('reports/customers', [Admin\ReportController::class, 'customers'])->name('reports.customers');
     Route::get('reports/expenses', [Admin\ReportController::class, 'expenses'])->name('reports.expenses');
 
     // System Settings
@@ -124,11 +127,14 @@ Route::prefix('manager')->name('manager.')->middleware(['auth', 'manager'])->gro
     Route::resource('expenses', Admin\ExpenseController::class);
 
     // Reports
+    Route::get('reports', [Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/sales', [Admin\ReportController::class, 'sales'])->name('reports.sales');
     Route::get('reports/sales/daily-details', [Admin\ReportController::class, 'dailyDetails'])->name('reports.sales.daily-details');
     Route::get('reports/sales/download-daily', [Admin\ReportController::class, 'downloadDaily'])->name('reports.sales.download-daily');
     Route::get('reports/profit', [Admin\ReportController::class, 'profit'])->name('reports.profit');
     Route::get('reports/stock', [Admin\ReportController::class, 'stock'])->name('reports.stock');
+    Route::get('reports/inventory', [Admin\ReportController::class, 'inventory'])->name('reports.inventory');
+    Route::get('reports/customers', [Admin\ReportController::class, 'customers'])->name('reports.customers');
     Route::get('reports/expenses', [Admin\ReportController::class, 'expenses'])->name('reports.expenses');
 
     // Activity Logs - Using Manager Controller

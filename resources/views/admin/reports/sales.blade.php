@@ -3,7 +3,30 @@
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">📊 Sales Report</h2>
     </x-slot>
 
-    <div class="py-8" x-data="dailySalesModal()">
+    <div class="py-8" x-data="{
+        isOpen: false,
+        isLoading: false,
+        selectedDate: '',
+        selectedDateFormatted: '',
+        dailyDetails: [],
+        openModal(date, formattedDate) {
+            this.selectedDate = date;
+            this.selectedDateFormatted = formattedDate;
+            this.isOpen = true;
+            this.isLoading = true;
+            this.dailyDetails = [];
+            fetch(`{{ $dailyDetailsUrl }}?date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    this.dailyDetails = data;
+                    this.isLoading = false;
+                })
+                .catch(error => {
+                    console.error('Error fetching details:', error);
+                    this.isLoading = false;
+                });
+        }
+    }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <form method="GET" class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex flex-wrap gap-3 items-end">
@@ -133,35 +156,4 @@
         </div>
     </div>
 
-    <script>
-        function dailySalesModal() {
-            return {
-                isOpen: false,
-                isLoading: false,
-                selectedDate: '',
-                selectedDateFormatted: '',
-                dailyDetails: [],
-
-                openModal(date, formattedDate) {
-                    this.selectedDate = date;
-                    this.selectedDateFormatted = formattedDate;
-                    this.isOpen = true;
-                    this.isLoading = true;
-                    this.dailyDetails = [];
-
-                    // Fetch data from backend for this specific date
-                    fetch(`{{ $dailyDetailsUrl }}?date=${date}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.dailyDetails = data;
-                            this.isLoading = false;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching details:', error);
-                            this.isLoading = false;
-                        });
-                }
-            }
-        }
-    </script>
 </x-app-layout>

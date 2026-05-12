@@ -60,18 +60,10 @@
             </a>
 
             <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
-            <p class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Reports</p>
-            <a href="{{ route('admin.reports.sales') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700">
-                📊 Sales Report
-            </a>
-            <a href="{{ route('admin.reports.profit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700">
-                💰 Profit Report
-            </a>
-            <a href="{{ route('admin.reports.stock') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700">
-                📉 Stock Report
-            </a>
-            <a href="{{ route('admin.reports.expenses') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700">
-                📋 Expense Report
+            <p class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analysis</p>
+            <a href="{{ route(auth()->user()->isAdmin() ? 'admin.reports.index' : 'manager.reports.index') }}" 
+               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 {{ request()->routeIs('*.reports.*') ? 'bg-indigo-50 dark:bg-gray-700 font-bold border-l-4 border-indigo-500' : '' }}">
+                📊 Reports Dashboard
             </a>
 
             <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
