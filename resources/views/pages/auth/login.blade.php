@@ -50,7 +50,7 @@ new class extends Component {
                         <label for="password"
                             class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
                         <div class="relative mt-1">
-                            <input wire:model="password" id="password" x-bind:type="show ? 'text' : 'password'" required
+                            <input wire:model="password" id="password" type="password" name="password" x-bind:type="show ? 'text' : 'password'" required
                                 class="block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pr-10">
                             <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 focus:outline-none focus:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                                 <svg x-show="!show" class="h-5 w-5" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
