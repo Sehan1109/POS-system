@@ -42,6 +42,7 @@ new #[Layout('layouts.guest')] class extends Component
 
             <div class="relative mt-1">
                 <x-text-input wire:model="form.password" id="password" class="block w-full pr-10"
+                                type="password"
                                 x-bind:type="show ? 'text' : 'password'"
                                 name="password"
                                 required autocomplete="current-password" />
