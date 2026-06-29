@@ -26,11 +26,10 @@ new class extends Component {
 ?>
 
 <x-guest-layout>
-    {{-- Brand Header --}}
+    {{-- Card Header --}}
     <div class="mb-8 text-center">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400 mb-1">Control Center</p>
-        <h1 class="text-3xl font-bold text-white leading-tight">Sign In</h1>
-        <p class="mt-2 text-sm text-slate-400">Access your POS dashboard</p>
+        <h1 class="text-2xl font-bold text-white leading-tight">Welcome Back</h1>
+        <p class="mt-2 text-sm text-slate-400">Sign in to your POS dashboard</p>
     </div>
 
     <form wire:submit="login" class="space-y-5">
